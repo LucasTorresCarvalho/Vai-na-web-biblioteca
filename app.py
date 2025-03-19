@@ -3,7 +3,6 @@ import sqlite3
 
 app = Flask(__name__)
 
-# Função para inicializar o banco de dados SQLite
 def init_db():
     with sqlite3.connect('database.db') as conn:
         conn.execute("""CREATE TABLE IF NOT EXISTS livros(
@@ -15,7 +14,6 @@ def init_db():
                     )""")
         print("Banco de dados criado!!")
 
-# Chama a função para criar o banco de dados ao iniciar o servidor
 init_db()
 
 @app.route('/')
@@ -29,20 +27,19 @@ def doar():
     titulo = dados.get('titulo')
     categoria = dados.get('categoria')
     autor = dados.get('autor')
-    imagen = dados.get('imagen')  # 🔥 Pegamos 'imagen', que é o nome da coluna no banco
+    imagen = dados.get('imagen') 
 
     if not all([titulo, categoria, autor, imagen]):  
         return jsonify({'erro': 'Todos os campos são obrigatórios'}), 400
 
     with sqlite3.connect('database.db') as conn:
         conn.execute("""INSERT INTO livros (titulo, categoria, autor, imagen)
-                    VALUES (?,?,?,?)""", (titulo, categoria, autor, imagen))  # 🔥 Agora funciona
+                    VALUES (?,?,?,?)""", (titulo, categoria, autor, imagen)) 
         conn.commit()
 
         return jsonify({"mensagem": "Livro cadastrado com sucesso"}), 201
 
 
-# ✅ Rota corrigida e movida para fora da função doar()
 @app.route('/livros', methods=['GET'])
 def listar_livros():
     with sqlite3.connect('database.db') as con:
@@ -60,9 +57,9 @@ def listar_livros():
         }
         livros_formatados.append(dicionario_livros)
 
-    return jsonify(livros_formatados)  # ✅ Agora está fora do loop
+    return jsonify(livros_formatados)  
 
 if __name__ == '__main__':
-    app.run(debug=True)  # ✅ Corrigido
+    app.run(debug=True) 
 
 
