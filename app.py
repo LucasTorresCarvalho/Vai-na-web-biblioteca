@@ -18,11 +18,7 @@ init_db()
 
 @app.route('/')
 def home_page():
-    return render_template('index.html')
-
-@app.route('/')
-def home_page():
-    return '<h2>Minha página lindíssima de Python</h2>'
+    return render_template('index.html')  # OU '<h2>Minha página lindíssima de Python</h2>'
 
 @app.route('/doar', methods=["POST"])
 def doar():
@@ -41,27 +37,19 @@ def doar():
                     VALUES (?,?,?,?)""", (titulo, categoria, autor, imagen)) 
         conn.commit()
 
-        return jsonify({"mensagem": "Livro cadastrado com sucesso"}), 201
-
+    return jsonify({"mensagem": "Livro cadastrado com sucesso"}), 201
 
 @app.route('/livros', methods=['GET'])
 def listar_livros():
     with sqlite3.connect('database.db') as con:
         livros = con.execute("SELECT * FROM livros").fetchall()
 
-    livros_formatados = []
+    livros_formatados = [
+        {"id": livro[0], "titulo": livro[1], "categoria": livro[2], "autor": livro[3], "imagen": livro[4]}
+        for livro in livros
+    ]
 
-    for livro in livros:
-        dicionario_livros = {
-            "id": livro[0],
-            "titulo": livro[1],
-            "categoria": livro[2],
-            "autor": livro[3],
-            "imagen": livro[4]
-        }
-        livros_formatados.append(dicionario_livros)
-
-    return jsonify(livros_formatados)  
+    return jsonify(livros_formatados)
 
 @app.route('/livros/<int:livro_id>', methods=['DELETE'])
 def deletar_livro(livro_id):
@@ -73,9 +61,7 @@ def deletar_livro(livro_id):
     if cursor.rowcount == 0:
         return jsonify({"erro": "Livro não encontrado"}), 404
 
-    return jsonify({"menssagem": "Livro excluido com sucesso"}), 200
+    return jsonify({"mensagem": "Livro excluído com sucesso"}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True) 
-
-
+    app.run(debug=True)
