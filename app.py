@@ -56,6 +56,29 @@ def doar():
         return jsonify({"erro": "Erro ao salvar no banco de dados."}), 500
     except Exception:
         return jsonify({"erro": "Ocorreu um erro interno. Tente novamente mais tarde."}), 500
+    
+@app.route('/livros', methods=['GET'])
+def listar_livros():
+    # Conecta ao banco de dados e recupera todos os registros da tabela 'livros'.
+    with sqlite3.connect('database.db') as conn:
+        livros = conn.execute("SELECT * FROM livros").fetchall()
+
+    # Lista para armazenar os livros formatados.
+    livros_formatados = []
+
+    # Formata cada livro como um dicionário e adiciona à lista.
+    for livro in livros:
+        dicionario_livros = {
+            "id": livro[0],
+            "titulo": livro[1],
+            "categoria": livro[2],
+            "autor": livro[3],
+            "imagem_url": livro[4]
+        }
+        livros_formatados.append(dicionario_livros)
+
+    # Retorna a lista de livros no formato JSON.
+    return jsonify(livros_formatados)
 
 if __name__ == '__main__':
     app.run(debug=True)  # Permite acesso externo
