@@ -24,6 +24,10 @@ def init_db():
         print(f"Erro ao criar o banco de dados: {str(e)}")
 
 init_db()
+@app.route('/')
+def homepage():
+    # Renderiza um template HTML chamado 'index.html'.
+    return render_template('index.html')
 
 @app.route('/doar', methods=["POST"])
 def doar():
@@ -54,4 +58,4 @@ def doar():
         return jsonify({"erro": "Ocorreu um erro interno. Tente novamente mais tarde."}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")  # Permite acesso externo
+    app.run(debug=True)  # Permite acesso externo
