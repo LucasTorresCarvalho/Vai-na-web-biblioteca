@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import sqlite3
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Permite qualquer origem para testes
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://localhost:5174", "https://vai-na-web-biblioteca.onrender.com"]}})
 
 # Função para inicializar o banco de dados
 def init_db():
@@ -54,4 +54,4 @@ def doar():
         return jsonify({"erro": "Ocorreu um erro interno. Tente novamente mais tarde."}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")  # Permite acesso externo
+    app.run(debug=True, host="0.0.0.0")
