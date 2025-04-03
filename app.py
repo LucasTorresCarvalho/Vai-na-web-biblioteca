@@ -57,6 +57,26 @@ def doar():
     except Exception:
         return jsonify({"erro": "Ocorreu um erro interno. Tente novamente mais tarde."}), 500
     
+@app.route('/livros/<int:livro_id>', methods=['DELETE'])
+def deletar_livro(livro_id):
+    try:
+        with sqlite3.connect('database.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM livros WHERE id = ?", (livro_id,))
+            conn.commit()
+            linhas_afetadas = cursor.rowcount  # Conta quantas linhas foram afetadas
+            cursor.close()
+
+        if linhas_afetadas == 0:
+            return jsonify({"erro": "Livro não encontrado"}), 404
+
+        return jsonify({"mensagem": "Livro excluído com sucesso"}), 200
+    except sqlite3.Error:
+        return jsonify({"erro": "Erro ao excluir livro do banco de dados."}), 500
+    except Exception:
+        return jsonify({"erro": "Ocorreu um erro interno. Tente novamente mais tarde."}), 500
+
+    
 @app.route('/livros', methods=['GET'])
 def listar_livros():
     # Conecta ao banco de dados e recupera todos os registros da tabela 'livros'.
@@ -76,6 +96,8 @@ def listar_livros():
             "imagem_url": livro[4]
         }
         livros_formatados.append(dicionario_livros)
+
+        
 
     # Retorna a lista de livros no formato JSON.
     return jsonify(livros_formatados)
